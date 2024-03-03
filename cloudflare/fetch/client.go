@@ -9,6 +9,7 @@ import (
 type Client struct {
 	// namespace - Objects that Fetch API belongs to. Default is Global
 	namespace js.Value
+	userAgent string
 }
 
 // applyOptions applies client options.
@@ -24,6 +25,7 @@ func (c *Client) HTTPClient(redirect RedirectMode) *http.Client {
 		Transport: &transport{
 			namespace: c.namespace,
 			redirect:  redirect,
+			userAgent: c.userAgent,
 		},
 	}
 }
@@ -36,6 +38,13 @@ type ClientOption func(*Client)
 func WithBinding(bind js.Value) ClientOption {
 	return func(c *Client) {
 		c.namespace = bind
+	}
+}
+
+// WithUserAgent sets the user agent on requests.
+func WithUserAgent(ua string) ClientOption {
+	return func(c *Client) {
+		c.userAgent = ua
 	}
 }
 
