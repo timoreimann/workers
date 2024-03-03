@@ -9,6 +9,7 @@ import (
 type Client struct {
 	// namespace - Objects that Fetch API belongs to. Default is Global
 	namespace js.Value
+	header    http.Header
 }
 
 // applyOptions applies client options.
@@ -24,6 +25,7 @@ func (c *Client) HTTPClient(redirect RedirectMode) *http.Client {
 		Transport: &transport{
 			namespace: c.namespace,
 			redirect:  redirect,
+			header:    c.header,
 		},
 	}
 }
@@ -36,6 +38,13 @@ type ClientOption func(*Client)
 func WithBinding(bind js.Value) ClientOption {
 	return func(c *Client) {
 		c.namespace = bind
+	}
+}
+
+// WithHeader sets one or more custom headers.
+func WithHeader(header http.Header) ClientOption {
+	return func(c *Client) {
+		c.header = header
 	}
 }
 
